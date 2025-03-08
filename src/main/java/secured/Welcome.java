@@ -15,7 +15,6 @@ import jakarta.servlet.http.HttpSession;
 import db.DatabaseUtils;
 
 @WebServlet(name = "WelcomeServlet", urlPatterns = {"/WelcomeServlet"})
-
 public class Welcome extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -25,7 +24,7 @@ public class Welcome extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute("username") == null) {
-            response.sendRedirect("login.html");
+            response.sendRedirect("login.jsp");
             return;
         }
 

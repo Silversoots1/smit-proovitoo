@@ -30,10 +30,10 @@ public class CreateUserServlet extends HttpServlet {
 
         try {
             login_utils.createUser(username, password);
-            response.sendRedirect("login.html?success=User created successfully");
+            response.sendRedirect("login.jsp?success=User created successfully");
         } catch (SQLException e) {
             e.printStackTrace();
-            response.sendRedirect("createUser.html?error=An error occurred");
+            response.sendRedirect("createUser.html");
         }
     }
 

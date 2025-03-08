@@ -43,11 +43,11 @@ public class LoginServlet extends HttpServlet {
 
                 response.sendRedirect("WelcomeServlet");
             } else {
-                request.getRequestDispatcher("login.html").forward(request, response);
+                request.getRequestDispatcher("login.jsp").forward(request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            request.getRequestDispatcher("login.html").forward(request, response);
+            request.getRequestDispatcher("login.jsp").forward(request, response);
         }
     }
 

@@ -5,4 +5,8 @@
             30
         </session-timeout>
     </session-config>
+    <context-param>
+        <param-name>javax.servlet.jsp.jstl.fmt.locale</param-name>
+        <param-value>en</param-value>
+    </context-param>
 </web-app>

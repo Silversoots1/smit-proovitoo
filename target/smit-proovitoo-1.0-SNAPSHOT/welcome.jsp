@@ -1,69 +1,69 @@
+<!-- filepath: c:\Users\silve\Documents\NetBeansProjects\smit-proovitoo\src\main\webapp\welcome.jsp -->
+<%@ page import="secured.UserDetails" %>
+<%@ page import="secured.CarOptionHtml" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome Page</title>
+    <link rel="stylesheet" href="styles.css">
+    <fmt:setLocale value="${param.lang != null ? param.lang : 'en'}" />
+    <fmt:setBundle basename="messages" />
+    <title><fmt:message key="title" /></title>
 </head>
 <body>
-    <h1>Palun sisestage enda kontaktandmed ning automargid, millest olete huvitatud</h1>
-    <br>
+    <div class="container">
+        <h1><fmt:message key="header" /></h1>
 
-    <form action="saveDetails" method="post">
-        <label for="name">Ees- ja perekonnanimi:</label>
-        <input type="text" id="name" name="name" required>
-        <br>
+        <form action="welcome.jsp" method="get">
+            <label for="lang">Language:</label>
+            <select id="lang" name="lang" onchange="this.form.submit()">
+                <option value="en" <c:if test="${param.lang == 'en'}">selected</c:if>>English</option>
+                <option value="et" <c:if test="${param.lang == 'et'}">selected</c:if>>Estonian</option>
+            </select>
+        </form>
 
-        <label for="phone">Kontakttelefon:</label>
-        <input type="text" id="phone" name="phone" required>
-        <br>
+        <%
+            String errorMessage = (String) request.getAttribute("errorMessage");
+            if (errorMessage != null) {
+        %>
+            <div class="error-message"><fmt:message key="error" /></div>
+        <%
+            }
 
-        <label for="cars">Automargid:</label>
-        <select id="cars" name="cars" multiple="">
-            <option>Mercedes-Benz</option>
-            <option>&nbsp;C klass</option>
-            <option>&nbsp;&nbsp;C 160</option>
-            <option>&nbsp;&nbsp;C 180</option>
-            <option>&nbsp;&nbsp;C 200</option>
-            <option>&nbsp;&nbsp;C 220</option>
-            <option>BMW</option>
-            <option>&nbsp;3 seeria</option>
-            <option>&nbsp;&nbsp;315</option>
-            <option>&nbsp;&nbsp;316</option>
-            <option>&nbsp;&nbsp;317</option>
-            <option>&nbsp;&nbsp;318</option>
-            <option>&nbsp;&nbsp;319</option>
-            <option>&nbsp;4 seeria</option>
-            <option>&nbsp;5 seeria</option>
-            <option>&nbsp;&nbsp;518</option>
-            <option>&nbsp;&nbsp;520</option>
-            <option>&nbsp;&nbsp;523</option>
-            <option>&nbsp;&nbsp;524</option>
-            <option>&nbsp;&nbsp;525</option>
-            <option>Audi</option>
-            <option>&nbsp;A seeria</option>
-            <option>&nbsp;e-tron</option>
-            <option>&nbsp;Q seeria</option>
-            <option>&nbsp;&nbsp;Q2</option>
-            <option>&nbsp;&nbsp;Q3</option>
-            <option>&nbsp;&nbsp;Q4</option>
-            <option>&nbsp;&nbsp;Q5</option>
-            <option>&nbsp;&nbsp;Q7</option>
-            <option>&nbsp;RS seeria</option>
-            <option>&nbsp;&nbsp;RS4</option>
-            <option>&nbsp;&nbsp;RS5</option>
-            <option>&nbsp;&nbsp;RS6</option>
-            <option>&nbsp;TT</option>
-            <option>Citroën</option>
-            <option>Muu</option>
-        </select>
-        <br>
+            UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+            String name = userDetails != null ? userDetails.getName() : "";
+            String phone = userDetails != null ? userDetails.getPhone() : "";
+            String carIds = userDetails != null ? userDetails.getCarIds() : "";
+            boolean hasLicense = userDetails != null && userDetails.isHasLicense();
+        %>
 
-        <label for="license">Kas Teil on kehtiv juhiluba?</label>
-        <input type="checkbox" id="license" name="license">
-        <br>
+        <form action="saveDetails" method="post">
+            <label for="name"><fmt:message key="name" /></label>
+            <input type="text" id="name" name="name" value="<%= name %>" required>
 
-        <input type="submit" value="Salvesta">
-    </form>
+            <label for="phone"><fmt:message key="phone" /></label>
+            <input type="text" id="phone" name="phone" value="<%= phone %>" required>
+
+            <label for="cars"><fmt:message key="cars" /></label>
+            <%
+                CarOptionHtml car_options_html_class = new CarOptionHtml();
+                String car_options_html = car_options_html_class.buildCarOptionsHtml(carIds);
+                out.print(car_options_html);
+            %>
+
+            <label for="license">
+                <span><fmt:message key="license" /></span>
+                <input class="checkbox" type="checkbox" id="license" name="license" <%= hasLicense ? "checked" : "" %>>
+            </label>
+            <input type="submit" value="<fmt:message key='save' />">
+        </form>
+
+        <form action="logout" method="post">
+            <button type="submit"><fmt:message key="logout" /></button>
+        </form>
+    </div>
 </body>
 </html>

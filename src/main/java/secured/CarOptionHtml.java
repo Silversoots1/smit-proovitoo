@@ -18,7 +18,7 @@ public class CarOptionHtml {
         Set<String> selectedCarIdsSet = carIdsToList(selectedCarIds);
 
         StringBuilder html = new StringBuilder();
-        html.append("<select id=\"cars\" name=\"cars\" multiple=\"\">");
+        html.append("<select id=\"cars\" name=\"cars\" multiple=\"\" required=\"\">");
 
         String currentBrand = "";
         String currentSeries = "";

@@ -25,7 +25,7 @@ public class SaveDetailsServlet extends HttpServlet {
 
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("username") == null) {
-            response.sendRedirect("login.html");
+            response.sendRedirect("login.jsp");
             return;
         }
 
@@ -35,7 +35,15 @@ public class SaveDetailsServlet extends HttpServlet {
         String[] carIds = request.getParameterValues("cars");
         boolean hasLicense = request.getParameter("license") != null;
 
-        String carIdsString = (carIds != null) ? String.join(",", carIds) : "";
+        if (name == null || name.trim().isEmpty() ||
+            phone == null || phone.trim().isEmpty() ||
+            carIds == null || carIds.length == 0) {
+            request.setAttribute("errorMessage", "Please fill in all fields.");
+            request.getRequestDispatcher("WelcomeServlet").forward(request, response);
+            return;
+        }
+
+        String carIdsString = String.join(",", carIds);
 
         try {
             if (userExists(username)) {
@@ -46,7 +54,8 @@ public class SaveDetailsServlet extends HttpServlet {
             response.sendRedirect("WelcomeServlet");
         } catch (SQLException e) {
             e.printStackTrace();
-            response.sendRedirect("error.html");
+            request.setAttribute("errorMessage", "An error occurred while saving your details.");
+            request.getRequestDispatcher("WelcomeServlet").forward(request, response);
         }
     }
 
