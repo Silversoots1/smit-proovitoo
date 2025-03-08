@@ -32,16 +32,15 @@ public class LoginUtils {
         }
     }
 
-    public void addUserToDatabase(String username, String hashedPassword) {
+    public void createUser(String username, String password) throws SQLException {
+        String hashedPassword = hashPassword(password);
         String sql = "INSERT INTO login (username, password) VALUES (?, ?)";
         try (Connection connection = DatabaseUtils.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, username);
             statement.setString(2, hashedPassword);
             statement.executeUpdate();
-            System.out.println("User added successfully.");
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
+
 }
