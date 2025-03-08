@@ -1,7 +1,5 @@
 package login;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,7 +19,6 @@ public class LoginUtils {
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, username);
             ResultSet resultSet = statement.executeQuery();
-            String hash_password = hashPassword("1234");
                     
             if (resultSet.next()) {
                 String storedPassword = resultSet.getString("password");
