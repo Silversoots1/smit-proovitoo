@@ -1,6 +1,10 @@
 package secured;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -8,7 +12,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+import db.DatabaseUtils;
+
 @WebServlet(name = "WelcomeServlet", urlPatterns = {"/WelcomeServlet"})
+
 public class Welcome extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -22,7 +29,34 @@ public class Welcome extends HttpServlet {
             return;
         }
 
+        String username = (String) session.getAttribute("username");
+
+        try {
+            UserDetails userDetails = getUserDetails(username);
+            request.setAttribute("userDetails", userDetails);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         request.getRequestDispatcher("welcome.jsp").forward(request, response);
+    }
+
+    private UserDetails getUserDetails(String username) throws SQLException {
+        String sql = "SELECT name, phone, car_ids, has_license FROM user_details WHERE username = ?";
+        try (Connection connection = DatabaseUtils.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, username);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                String name = resultSet.getString("name");
+                String phone = resultSet.getString("phone");
+                String carIds = resultSet.getString("car_ids");
+                boolean hasLicense = resultSet.getBoolean("has_license");
+                return new UserDetails(name, phone, carIds, hasLicense);
+            } else {
+                return null;
+            }
+        }
     }
 
     @Override

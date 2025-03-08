@@ -1,6 +1,8 @@
 package secured;
 
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Connection;
@@ -11,11 +13,12 @@ import db.DatabaseUtils;
 
 public class CarOptionHtml {
 
-    public String buildCarOptionsHtml() {
+    public String buildCarOptionsHtml(String selectedCarIds) {
         List<CarOption> carOptions = getCarOptions();
-        
+        Set<String> selectedCarIdsSet = carIdsToList(selectedCarIds);
+
         StringBuilder html = new StringBuilder();
-        html.append("<select id=\"cars\" name=\"cars\" multiple=\"\">\n");
+        html.append("<select id=\"cars\" name=\"cars\" multiple=\"\">");
 
         String currentBrand = "";
         String currentSeries = "";
@@ -23,19 +26,25 @@ public class CarOptionHtml {
         for (CarOption carOption : carOptions) {
             if (!carOption.getBrand().equals(currentBrand)) {
                 if (!currentBrand.isEmpty()) {
-                    html.append("</option>\n");
+                    html.append("</option>");
                 }
                 currentBrand = carOption.getBrand();
-                html.append("<option class=\"option-group\" value=\"").append(carOption.getId()).append("\">").append(currentBrand).append("</option>\n");
+                html.append("<option class=\"option-group\" value=\"").append(carOption.getId()).append("\"")
+                    .append(IsOptionSelected(selectedCarIdsSet, carOption.getId()))
+                    .append(">").append(currentBrand).append("</option>");
             }
 
             if (!carOption.getSeries().equals(currentSeries) && currentSeries != "") {
                 currentSeries = carOption.getSeries();
-                html.append("<option class=\"option-series\" value=\"").append(carOption.getId()).append("\">").append(currentSeries).append("</option>\n");
+                html.append("<option class=\"option-series\" value=\"").append(carOption.getId()).append("\"")
+                    .append(IsOptionSelected(selectedCarIdsSet, carOption.getId()))
+                    .append(">").append(currentSeries).append("</option>");
             }
 
             if (!carOption.getModel().isEmpty()) {
-                html.append("<option class=\"option-model\" value=\"").append(carOption.getId()).append("\">").append(carOption.getModel()).append("</option>\n");
+                html.append("<option class=\"option-model\" value=\"").append(carOption.getId()).append("\"")
+                    .append(IsOptionSelected(selectedCarIdsSet, carOption.getId()))
+                    .append(">").append(carOption.getModel()).append("</option>");
             }
         }
 
@@ -43,12 +52,25 @@ public class CarOptionHtml {
             html.append("</option>\n");
         }
 
-        html.append("</select>\n");
+        html.append("</select>");
         return html.toString();
+    }
+    
+    private String IsOptionSelected(Set<String> selectedCarIdsSet, int id) {
+        return selectedCarIdsSet.contains(String.valueOf(id)) ? " selected" : "";
+    }
+
+    private Set<String> carIdsToList(String selectedCarIds) {
+        Set<String> selectedCarIdsSet = new HashSet<>();
+        if (selectedCarIds != null && !selectedCarIds.isEmpty()) {
+            for (String id : selectedCarIds.split(",")) {
+                selectedCarIdsSet.add(id.trim());
+            }
+        }
+        return selectedCarIdsSet;
     }
 
     private List<CarOption> getCarOptions() {
-
         List<CarOption> carOptions = new ArrayList<>();
         String sql = "SELECT id, brand, series, model FROM car_options ORDER BY brand, series, model";
 

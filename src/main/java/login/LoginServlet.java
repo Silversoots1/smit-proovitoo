@@ -21,7 +21,7 @@ public class LoginServlet extends HttpServlet {
             if (session.getAttribute("page") != null) {
                 response.sendRedirect(session.getAttribute("page").toString());
             } else {
-                response.sendRedirect("welcome.jsp");
+                response.sendRedirect("WelcomeServlet");
             }
             return;
         }
@@ -41,7 +41,7 @@ public class LoginServlet extends HttpServlet {
 
                 response.setHeader("Set-Cookie", "JSESSIONID=" + session.getId() + "; Secure; HttpOnly");
 
-                response.sendRedirect("welcome.jsp");
+                response.sendRedirect("WelcomeServlet");
             } else {
                 request.getRequestDispatcher("login.html").forward(request, response);
             }
