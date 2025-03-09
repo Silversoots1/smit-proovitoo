@@ -20,6 +20,7 @@ Import the Database Dump
  - mysql -u dev -p your_database_name < /path/to/your/database_dump.sql
 
 Deploy the WAR File
+ - https://github.com/Silversoots1/smit-proovitoo/blob/fdfe7a92ad5f735e044749a6189acb6640f0bfda/target/smit-proovitoo.war
  - Copy the WAR File to tomcat/webapps/
 
 Start Tomcat: Start the Tomcat server.
