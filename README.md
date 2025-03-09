@@ -17,6 +17,7 @@ Install MySQL
  - EXIT;
 
 Import the Database Dump
+ - https://github.com/Silversoots1/smit-proovitoo/blob/815d822bee612c4b667b93ea10dc0c4054f55607/database_dump/mysql.sql
  - mysql -u dev -p your_database_name < /path/to/your/database_dump.sql
 
 Deploy the WAR File
