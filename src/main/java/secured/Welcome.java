@@ -29,10 +29,17 @@ public class Welcome extends HttpServlet {
         }
 
         String username = (String) session.getAttribute("username");
+        String lang = request.getParameter("lang");
+
+        if (lang != null) {
+            session.setAttribute("lang", lang);
+        } else {
+            session.setAttribute("lang", "en");
+        }
 
         try {
-            UserDetails userDetails = getUserDetails(username);
-            request.setAttribute("userDetails", userDetails);
+            UserDetails user_details = getUserDetails(username);
+            request.setAttribute("user_details", user_details);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -45,15 +52,16 @@ public class Welcome extends HttpServlet {
         try (Connection connection = DatabaseUtils.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, username);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                String name = resultSet.getString("name");
-                String phone = resultSet.getString("phone");
-                String carIds = resultSet.getString("car_ids");
-                boolean hasLicense = resultSet.getBoolean("has_license");
-                return new UserDetails(name, phone, carIds, hasLicense);
-            } else {
-                return null;
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    String name = resultSet.getString("name");
+                    String phone = resultSet.getString("phone");
+                    String carIds = resultSet.getString("car_ids");
+                    boolean hasLicense = resultSet.getBoolean("has_license");
+                    return new UserDetails(name, phone, carIds, hasLicense);
+                } else {
+                    return null;
+                }
             }
         }
     }

@@ -34,12 +34,13 @@ public class SaveDetailsServlet extends HttpServlet {
         String phone = request.getParameter("phone");
         String[] carIds = request.getParameterValues("cars");
         boolean hasLicense = request.getParameter("license") != null;
+        String lang = request.getParameter("lang");
 
         if (name == null || name.trim().isEmpty() ||
             phone == null || phone.trim().isEmpty() ||
             carIds == null || carIds.length == 0) {
-            request.setAttribute("errorMessage", "Please fill in all fields.");
-            request.getRequestDispatcher("WelcomeServlet").forward(request, response);
+            request.setAttribute("error", "fill_all_fields");
+            request.getRequestDispatcher("WelcomeServlet?lang=" + lang).forward(request, response);
             return;
         }
 
@@ -51,11 +52,11 @@ public class SaveDetailsServlet extends HttpServlet {
             } else {
                 saveDetails(username, name, phone, carIdsString, hasLicense);
             }
-            response.sendRedirect("WelcomeServlet");
+            response.sendRedirect("WelcomeServlet?lang=" + lang);
         } catch (SQLException e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "An error occurred while saving your details.");
-            request.getRequestDispatcher("WelcomeServlet").forward(request, response);
+            request.setAttribute("error", "saving_error");
+            request.getRequestDispatcher("WelcomeServlet?lang=" + lang).forward(request, response);
         }
     }
 

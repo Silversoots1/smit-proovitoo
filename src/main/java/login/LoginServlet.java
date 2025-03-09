@@ -29,6 +29,7 @@ public class LoginServlet extends HttpServlet {
         try {
             String username = request.getParameter("username");
             String password = request.getParameter("password");
+
             Class.forName("com.mysql.cj.jdbc.Driver");
             LoginUtils login_utils = new LoginUtils();
 
@@ -36,19 +37,24 @@ public class LoginServlet extends HttpServlet {
                 if (session != null) {
                     session.invalidate();
                 }
+                String lang = request.getParameter("lang");
+
                 session = request.getSession(true);
                 session.setAttribute("username", username);
+                session.setAttribute("lang", lang);
 
                 response.setHeader("Set-Cookie", "JSESSIONID=" + session.getId() + "; Secure; HttpOnly");
-
                 response.sendRedirect("WelcomeServlet");
-            } else {
-                request.getRequestDispatcher("login.jsp").forward(request, response);
+                return;
+            } else if (username != null && password != null) {
+                request.setAttribute("error_message", "invalid_credentials");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.setAttribute("error_message", "login_failed");
         }
+
+        request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 
     @Override

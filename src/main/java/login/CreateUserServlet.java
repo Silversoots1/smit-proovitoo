@@ -19,10 +19,11 @@ public class CreateUserServlet extends HttpServlet {
 
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        String confirmPassword = request.getParameter("confirmPassword");
+        String confirm_password = request.getParameter("confirm_password");
 
-        if (!password.equals(confirmPassword)) {
-            response.sendRedirect("createUser.html?error=Passwords do not match");
+        if (!password.equals(confirm_password)) {
+            request.setAttribute("error_message", "passwords_match_error");
+            request.getRequestDispatcher("createUser.jsp").forward(request, response);
             return;
         }
 
@@ -30,10 +31,11 @@ public class CreateUserServlet extends HttpServlet {
 
         try {
             login_utils.createUser(username, password);
-            response.sendRedirect("login.jsp?success=User created successfully");
+            response.sendRedirect("login.jsp?success=user_created_successfully");
         } catch (SQLException e) {
             e.printStackTrace();
-            response.sendRedirect("createUser.html");
+            request.setAttribute("error_message", "user_creation_failed");
+            request.getRequestDispatcher("createUser.jsp").forward(request, response);
         }
     }
 
