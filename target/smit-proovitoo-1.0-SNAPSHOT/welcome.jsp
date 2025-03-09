@@ -34,7 +34,8 @@
             <label for="cars"><fmt:message key="cars" /></label>
             <%
                 CarOptionHtml car_options_html_class = new CarOptionHtml();
-                String car_options_html = car_options_html_class.buildCarOptionsHtml(user_details.getCarIds());
+                String car_ids_not_null = user_details != null ? user_details.getCarIds() : "";
+                String car_options_html = car_options_html_class.buildCarOptionsHtml(car_ids_not_null);
                 out.print(car_options_html);
             %>
 
